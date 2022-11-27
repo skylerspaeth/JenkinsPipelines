@@ -2,11 +2,31 @@ pipeline {
   agent any
 
   stages {
-    stage('Check Fedora Versions') {
+    stage('Check Fedora versions') {
       steps {
-        echo 'Fetching all numeric Fedora Versions...'
+        echo 'Fetching all numeric Fedora versions...'
         sh('''#!/bin/bash
-          curl -s https://pdc.fedoraproject.org/rest_api/v1/product-versions/ | jq -r '.results[].version' | grep -P '^\\d+$'
+          curl -s https://pdc.fedoraproject.org/rest_api/v1/product-versions/ | jq -r '.results[].version' | grep -P '^\\d+$' | uniq | tee upstream-releases.txt
+        ''')
+      }
+    }
+    stage('Check SkyOS versions') {
+      steps {
+        sh('''#!/bin/bash
+          git clone https://github.com/skylerspaeth/SkyOS.git repo/
+          cd repo/
+          git tag -l | tee skyos-releases.txt
+        ''')
+      }
+    }
+    stage('Detect new versions') {
+      steps {
+        sh('''#!/bin/bash
+          diff upstream-releases.txt skyos-releases.txt | grep '^<' > new-versions.txt
+          if [[ $(wc -l new-versions.txt) -gt 0 ]]; then
+            echo "New Fedora versions are available to build SkyOS for:"
+            cat new-versions.txt
+          fi
         ''')
       }
     }
