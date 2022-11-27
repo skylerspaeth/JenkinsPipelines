@@ -23,7 +23,7 @@ pipeline {
         sh('''#!/bin/bash -e
           git clone https://github.com/skylerspaeth/SkyOS.git repo/
           cd repo/
-          echo "Fetching SkyOS tags from GitHub repo...'
+          echo 'Fetching SkyOS tags from GitHub repo...'
           git tag -l | tee ../skyos-releases.txt
         ''')
       }
