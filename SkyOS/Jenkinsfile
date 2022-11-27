@@ -15,7 +15,7 @@ pipeline {
         sh('''#!/bin/bash
           git clone https://github.com/skylerspaeth/SkyOS.git repo/
           cd repo/
-          git tag -l | tee skyos-releases.txt
+          git tag -l | tee ../skyos-releases.txt
         ''')
       }
     }
