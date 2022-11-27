@@ -6,6 +6,7 @@ pipeline {
       steps {
         sh('''#!/bin/bash -e
           rm -rf repo/
+          rm new-versions.txt upstream-releases.txt skyos-releases.txt
         ''')
       }
     }
@@ -22,6 +23,7 @@ pipeline {
         sh('''#!/bin/bash -e
           git clone https://github.com/skylerspaeth/SkyOS.git repo/
           cd repo/
+          echo "Fetching SkyOS tags from GitHub repo...'
           git tag -l | tee ../skyos-releases.txt
         ''')
       }
@@ -29,8 +31,8 @@ pipeline {
     stage('Detect new versions') {
       steps {
         sh('''#!/bin/bash -e
-          diff upstream-releases.txt skyos-releases.txt | grep '^<' > new-versions.txt
-          if [[ "$(wc -l < new-versions.txt)" -gt 0 ]]; then
+          diff upstream-releases.txt skyos-releases.txt | grep '^<' | cut -d' ' -f2 > new-versions.txt
+          if [[ $(wc -l < new-versions.txt) -gt 0 ]]; then
             echo "New Fedora versions are available to build SkyOS for:"
             cat new-versions.txt
           fi
