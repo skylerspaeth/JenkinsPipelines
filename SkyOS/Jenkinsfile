@@ -6,7 +6,7 @@ pipeline {
       steps {
         echo 'Fetching all numeric Fedora Versions...'
         sh('''#!/bin/bash
-          curl https://pdc.fedoraproject.org/rest_api/v1/product-versions/ | jq -r '.results[].version' | grep -E '^\\d+$'
+          curl https://pdc.fedoraproject.org/rest_api/v1/product-versions/ | jq -r '.results[].version' | grep -E '^\\\\d+$'
         ''')
       }
     }
