@@ -1,0 +1,14 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Check Fedora Versions') {
+      steps {
+        echo 'Fetching all numeric Fedora Versions...'
+        sh('''#!/bin/bash
+          curl https://pdc.fedoraproject.org/rest_api/v1/product-versions/ | jq -r '.results[].version' | grep -E '^\\d+$'
+        ''')
+      }
+    }
+  }
+}
